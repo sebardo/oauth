@@ -1,0 +1,58 @@
+# app/config/security.yml
+#security:
+#    firewalls:
+#        oauth_token:
+#            pattern:    ^/oauth/v2/token
+#            security:   false
+#
+#        oauth_authorize:
+#            pattern:    ^/oauth/v2/auth
+#            # Add your favorite authentication process here
+#
+#        api:
+#            pattern:    ^/api
+#            fos_oauth:  true
+#            stateless:  true
+##            anonymous:  false # can be omitted as its default value
+#            anonymous:  true # note that anonymous access is now enabled
+
+# also note absence of "access_control" section
+#    access_control:
+#        - { path: ^/api, roles: [ IS_AUTHENTICATED_FULLY ] }
+
+security:
+    encoders:
+        ApiBundle\Entity\Actor:
+            algorithm:            pbkdf2
+            hash_algorithm:       sha512
+            encode_as_base64:     true
+            iterations:           1000
+
+    role_hierarchy:
+        ROLE_ADMIN:       ROLE_USER
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
+
+    providers:
+        user_provider:
+            entity: { class: ApiBundle:BaseActor }
+
+    firewalls:
+        oauth_token:
+            pattern:    ^/oauth/v2/token
+            security:   false
+
+        oauth_authorize:
+            pattern:    ^/oauth/v2/auth
+            form_login:
+                provider: user_provider
+                check_path: login_check
+                login_path: login
+            anonymous: true
+            context: test_connect
+
+        api:
+            pattern:    ^/
+            fos_oauth:  true
+            stateless:  true
+            anonymous:  true # Needed to allow access to oauth pages
+
