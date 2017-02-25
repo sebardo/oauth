@@ -65,8 +65,6 @@ class SecurityController extends Controller
             $userInfo['username'] = $user->getUsername();
             $userInfo['email'] = $user->getEmail();
             $userInfo['id'] = $user->getId();
-        }else{
-            print_r(get_class($user));
         }
 
         return new JsonResponse($userInfo);
